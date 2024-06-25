@@ -1,0 +1,16 @@
+ for year in range(1985, 1990):
+        date = datetime.datetime(year, 1, 1)
+        filename = date.strftime("%y.nc")
+        filename = os.path.join(tempsrcdir, filename)
+        dataset = netCDF4.Dataset(filename, "w")
+        shape = random_field.shape
+        dataset.createDimension("dim0", shape[0])
+        dataset.createDimension("dim1", shape[1])
+        dataset.createDimension("time")
+        var = dataset.createVariable("random", "f8", ("time", "dim0", "dim1"))
+        time = dataset.createVariable("time", "f8", ("time",))
+        time.units = _UNITS_STD_TIME
+        time.calendar = _CALENDAR_NO_LEAP
+        var[0, :, :] = random_field
+        time[:] = netCDF4.date2num(date, _UNITS_STD_TIME, calendar=_CALENDAR_NO_LEAP)
+        dataset.close()
